@@ -21,9 +21,21 @@ export default defineConfig({
   },
   test: {
     // The colour and engine suites are pure computation and run much faster
-    // without a DOM; only the component tests need jsdom, and they opt in with
-    // a `@vitest-environment jsdom` docblock.
+    // without a DOM; only the component tests need one, and they opt in with a
+    // `@vitest-environment happy-dom` docblock.
     environment: 'node',
     include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
+    // The default 5s is meant for unit tests, and these are not all unit tests.
+    // Walking a whole session into the report renders seventeen plates, a few
+    // hundred staircase trials and six scenes simulated pixel by pixel: 1.5s on
+    // a laptop, and 5.2s on a two-core CI runner sharing itself with the other
+    // suites, which is how this first showed up as a CI-only failure.
+    //
+    // Raised well past what any current test needs rather than trimmed to fit,
+    // because a runner under load has no ceiling worth guessing at. Nothing
+    // depends on the timeout to catch a stuck state machine -- every stage loop
+    // in the session test is bounded by its own iteration guard and fails with a
+    // useful message instead.
+    testTimeout: 30_000,
   },
 });
