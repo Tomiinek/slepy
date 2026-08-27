@@ -1,0 +1,780 @@
+/*
+ * Component styles for the report and the stage screens.
+ *
+ * One rule runs through all of it: hue is never the only carrier of meaning.
+ * Everything that a colour distinguishes -- affected cone, supporting versus
+ * contradicting evidence, the selected cap -- also carries a border, an icon, a
+ * position or a label. The audience for this app is precisely the people for whom
+ * a red/green status dot does not work.
+ */
+
+.stack--tight > * + * {
+  margin-top: var(--space-2);
+}
+
+.stack--loose > * + * {
+  margin-top: var(--space-7);
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* -------- Progress bar chrome -------- */
+
+.progress-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-3) var(--space-5);
+}
+
+.progress-bar .progress {
+  max-width: 940px;
+  margin: 0 auto;
+}
+
+/* -------- Chips -------- */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.chip--sm {
+  font-size: 0.72rem;
+  padding: 1px 8px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.chip__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* -------- Cone panel -------- */
+
+.cone-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+/* The affected axis gets a left rule as well as a tint, so it is identifiable
+ * without relying on the colour that the user may not be able to see. */
+.cone-card--affected {
+  border-left: 3px solid var(--warn);
+  background: var(--bg-raised-2);
+}
+
+.cone-card__title {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  min-height: 2.6em;
+}
+
+.cone-card__value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.cone-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-inset);
+  overflow: hidden;
+  margin: var(--space-2) 0;
+}
+
+.cone-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--ok);
+}
+
+.cone-bar__fill--affected {
+  background: var(--warn);
+  /* Hatching, so the affected bar reads as different even in a screenshot
+   * viewed by someone who cannot separate the two fill colours. */
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgb(0 0 0 / 0.28) 0 4px,
+    transparent 4px 8px
+  );
+}
+
+/* -------- Charts -------- */
+
+.chart {
+  margin: 0;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.chart figcaption {
+  margin-top: var(--space-3);
+  max-width: var(--measure);
+}
+
+.chart--diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart__tick {
+  fill: var(--text-faint);
+  font-size: 10px;
+  font-family: var(--font-mono);
+}
+
+/* -------- Tables -------- */
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.table-wrap table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.92rem;
+}
+
+.table-wrap th,
+.table-wrap td {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.table-wrap tbody tr:last-child th,
+.table-wrap tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table-wrap thead th {
+  color: var(--text-dim);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--bg-inset);
+}
+
+/* -------- Elevation scale -------- */
+
+.elev {
+  position: relative;
+  width: 150px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+}
+
+/* 1x to ~1.6x, the typical range, on the same log scale as the marker. */
+.elev__normal {
+  position: absolute;
+  left: 0;
+  width: 19%;
+  top: 0;
+  bottom: 0;
+  background: var(--ok);
+  opacity: 0.45;
+  border-radius: 999px 0 0 999px;
+}
+
+.elev__marker {
+  position: absolute;
+  top: -3px;
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--text);
+  transform: translateX(-1.5px);
+}
+
+/* -------- Evidence list -------- */
+
+.evidence {
+  list-style: none;
+  padding: 0;
+  max-width: var(--measure);
+}
+
+.evidence li {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.evidence li:last-child {
+  border-bottom: 0;
+}
+
+.evidence__mark {
+  flex: 0 0 auto;
+  width: 20px;
+  text-align: center;
+  color: var(--ok);
+  font-weight: 700;
+}
+
+.evidence--against .evidence__mark {
+  color: var(--danger);
+}
+
+/* -------- Confusion families -------- */
+
+.family {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  background: var(--bg-raised);
+}
+
+.family__head {
+  margin-bottom: var(--space-3);
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.swatch {
+  margin: 0;
+  width: 84px;
+  text-align: center;
+}
+
+.swatch__chip {
+  height: 56px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgb(255 255 255 / 0.14);
+}
+
+.swatch figcaption {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  line-height: 1.3;
+}
+
+.dot-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  vertical-align: middle;
+}
+
+/* -------- Arrangement caps -------- */
+
+.caps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: rgb(0 0 0 / 0.08);
+  max-width: min(900px, 94vw);
+}
+
+.cap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: grab;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+/* Selection is a ring plus an offset, never a colour change: the caps are the
+ * stimulus, so tinting them would corrupt the measurement. */
+.cap--selected {
+  border-color: #1b1b1b;
+  transform: translateY(-6px);
+}
+
+.cap--carrying {
+  border-style: dashed;
+  transform: translateY(-10px) scale(1.06);
+}
+
+.cap--anchor {
+  cursor: default;
+  border-color: rgb(0 0 0 / 0.4);
+}
+
+.cap__pin {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.55);
+}
+
+/* -------- Brightness match (bipartite field) -------- */
+
+.bipartite {
+  display: flex;
+  gap: 0;
+  padding: 26px;
+  border-radius: var(--radius-lg);
+  /* Local dark surround for the brightness judgement. See LuminanceStage. */
+  background: #141414;
+}
+
+.bipartite__half {
+  width: 150px;
+  height: 170px;
+}
+
+.bipartite__legend {
+  display: flex;
+  justify-content: center;
+  gap: 96px;
+  font-size: 0.8rem;
+  color: #2a2a2a;
+  margin-top: -12px;
+}
+
+/* -------- Simulator -------- */
+
+.sim-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: flex-end;
+}
+
+.sim-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 190px;
+}
+
+.sim-field select {
+  font: inherit;
+  color: var(--text);
+  background: var(--bg-raised-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+}
+
+/* Segmented control. The active segment carries a filled background *and* bold
+ * weight, so which one is on does not depend on seeing the accent colour. */
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.seg__btn {
+  font: inherit;
+  color: var(--text-dim);
+  background: transparent;
+  border: 0;
+  padding: 9px 14px;
+  cursor: pointer;
+}
+
+.seg__btn + .seg__btn {
+  border-left: 1px solid var(--border-strong);
+}
+
+.seg__btn--on {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+
+.split {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.split__stage {
+  position: relative;
+  aspect-ratio: 400 / 260;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-inset);
+}
+
+.split__layer {
+  position: absolute;
+  inset: 0;
+}
+
+.split__seam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.5);
+  transform: translateX(-1px);
+  pointer-events: none;
+}
+
+.split__tag {
+  position: absolute;
+  bottom: 10px;
+  font-size: 0.75rem;
+  font-weight: 650;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.62);
+  color: #fff;
+  pointer-events: none;
+}
+
+.split__tag--left {
+  left: 10px;
+}
+
+.split__tag--right {
+  right: 10px;
+}
+
+.split__control input {
+  width: 100%;
+}
+
+.stage-intro__body p:last-child {
+  margin-bottom: 0;
+}
+
+details.card summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+details.card[open] summary {
+  margin-bottom: var(--space-3);
+}
+
+/* ---------------------------------------------------------------------------
+   Visualisations
+   Charts and pictograms that replaced prose in the report. Sizes are fixed in
+   ch/px rather than being fully fluid because a gauge or pictogram that reflows
+   below a certain width stops being readable -- they wrap to fewer columns
+   instead.
+   --------------------------------------------------------------------------- */
+
+.hero-viz {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.hero-viz__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.hero-viz__cap {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+}
+
+.gauge {
+  margin: 0;
+  width: 100%;
+  max-width: 300px;
+}
+
+.gauge svg {
+  width: 100%;
+  height: auto;
+}
+
+.gauge__value {
+  font: 700 40px var(--font);
+  fill: var(--text);
+}
+
+.gauge__label {
+  font: 500 14px var(--font);
+  fill: var(--text-dim);
+}
+
+.gauge__band {
+  font: 500 9px var(--font);
+  fill: var(--text-faint);
+}
+
+.picto {
+  margin: 0;
+  width: 100%;
+}
+
+.picto svg {
+  width: 100%;
+  height: auto;
+}
+
+.picto figcaption {
+  margin-top: var(--space-3);
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+/* Scene tiles: "where it bites", as pictures rather than bullets. */
+.scene-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-3);
+}
+
+.scene-tile {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-raised);
+}
+
+.scene-tile__art {
+  aspect-ratio: 400 / 260;
+  display: block;
+}
+
+.scene-tile__art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.scene-tile figcaption {
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+}
+
+/* Inheritance dials. */
+.inherit {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  text-align: center;
+}
+
+.inherit__dial {
+  width: 66px;
+  height: 66px;
+  margin: 0 auto var(--space-2);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  /* Ring rather than pie: the hole carries the number. */
+  mask: radial-gradient(circle, transparent 58%, #000 59%);
+  -webkit-mask: radial-gradient(circle, transparent 58%, #000 59%);
+}
+
+.inherit__dial span {
+  font: 700 0.95rem var(--font-mono);
+  color: var(--text);
+}
+
+.inherit__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.inherit__note {
+  font-size: 0.78rem;
+}
+
+/* Stage thumbnails on the intro screen. */
+.thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.thumb {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+}
+
+.thumb__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+.thumb figcaption {
+  margin-top: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85rem;
+}
+
+.setup-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip--setup {
+  font-size: 0.82rem;
+}
+
+.chip__glyph {
+  color: var(--accent);
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+/* Compact key/value table, for lookup facts that need no prose. */
+.kv {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.kv th,
+.kv td {
+  text-align: left;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.kv tbody tr:last-child th,
+.kv tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.kv th {
+  width: 34%;
+  font-weight: 600;
+  color: var(--text-dim);
+  padding-right: var(--space-3);
+}
+
+.seg--small .seg__btn {
+  padding: 4px 10px;
+  font-size: 0.78rem;
+}
+
+.btn--small {
+  padding: 4px 10px;
+  font-size: 0.78rem;
+}
+
+.callout--ok {
+  border-left: 3px solid var(--ok);
+}
+
+/* Value-against-references scale, used for the red brightness match. */
+.mscale {
+  position: relative;
+  height: 34px;
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+.mscale__track {
+  position: absolute;
+  top: 7px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--bg-raised-2), var(--border-strong));
+}
+
+.mscale__ref {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mscale__reftick {
+  width: 2px;
+  height: 18px;
+  background: var(--border-strong);
+}
+
+.mscale__reflabel {
+  font-size: 0.68rem;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.mscale__you {
+  position: absolute;
+  top: 3px;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--bg-inset);
+}
+
+/* Oversized figure used in place of a number buried in a sentence. */
+.bignum {
+  font: 700 2.6rem/1 var(--font);
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.bignum__unit {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-left: 2px;
+}

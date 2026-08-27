@@ -1,0 +1,54 @@
+/*
+ * Design tokens.
+ *
+ * The chrome is deliberately dark, but note that stimulus screens override the
+ * background with a controlled neutral adaptation field (see `.adaptation-field`
+ * in base.css). Chromatic accents are never the only carrier of meaning anywhere
+ * in the UI -- this app is used by people who cannot rely on hue.
+ */
+:root {
+  --bg: #0b0d10;
+  --bg-raised: #14181d;
+  --bg-raised-2: #1c2126;
+  --bg-inset: #090b0e;
+
+  --border: #262d35;
+  --border-strong: #3a444f;
+
+  --text: #e8ecf1;
+  --text-dim: #a6b0bd;
+  --text-faint: #6d7987;
+
+  --accent: #6ea8fe;
+  --accent-ink: #0b0d10;
+  --accent-dim: #2a4a7f;
+
+  --warn: #f0b849;
+  --danger: #f2777a;
+  --ok: #63c8a0;
+
+  /* The neutral adaptation field used behind every chromatic stimulus.
+   * Y ~= 0.20 in linear light, i.e. a mid grey rather than the dark chrome. */
+  --adapt-field: #7c7c7c;
+
+  --radius: 10px;
+  --radius-lg: 16px;
+  --radius-sm: 6px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+
+  --font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 2px 4px rgb(0 0 0 / 0.4), 0 18px 48px rgb(0 0 0 / 0.45);
+
+  --measure: 68ch;
+}
