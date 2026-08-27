@@ -24,6 +24,8 @@ export interface Voice {
   readonly sees: string;
   /** "are" vs "is" / "are". */
   readonly is: string;
+  /** "were" vs "was" / "were". */
+  readonly was: string;
   /** "have" vs "has" / "have". */
   readonly has: string;
 }
@@ -36,6 +38,7 @@ export const SELF: Voice = {
   s: '',
   sees: 'see',
   is: 'are',
+  was: 'were',
   has: 'have',
 };
 
@@ -49,6 +52,7 @@ export function otherVoice(name: string | null): Voice {
       s: '',
       sees: 'see',
       is: 'are',
+      was: 'were',
       has: 'have',
     };
   }
@@ -65,6 +69,7 @@ export function otherVoice(name: string | null): Voice {
     s: 's',
     sees: 'sees',
     is: 'is',
+    was: 'was',
     has: 'has',
   };
 }

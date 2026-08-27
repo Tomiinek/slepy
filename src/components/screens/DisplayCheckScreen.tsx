@@ -109,11 +109,6 @@ export function DisplayCheckScreen({ onContinue, onBack }: Props) {
           Start the test
         </button>
       </div>
-      {(!confirmed || !filtersOff) && (
-        <p className="faint">
-          Both boxes are required: a filtered display looks exactly like a colour deficiency.
-        </p>
-      )}
     </div>
   );
 }

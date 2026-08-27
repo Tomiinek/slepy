@@ -44,7 +44,7 @@ export function LuminanceStage({ repeat, total, start, onSubmit }: Props) {
 
   return (
     <div className="adaptation-field">
-      <p className="stimulus-help" aria-live="polite">
+      <p className="stimulus-help stimulus-help--top" aria-live="polite">
         Match {repeat + 1} of {total}. Make the red square as <strong>bright</strong> as the grey
         one. Ignore the fact that they are different colours &mdash; only brightness matters.
       </p>
@@ -114,7 +114,7 @@ export function LuminanceStage({ repeat, total, start, onSubmit }: Props) {
         </button>
       </div>
 
-      <p className="stimulus-help">
+      <p className="stimulus-help stimulus-help--bottom">
         Use the slider or the <kbd>&larr;</kbd> <kbd>&rarr;</kbd> keys once it has focus. Try
         overshooting in both directions and settling in the middle &mdash; it is easier to find the
         point where the red flips from clearly darker to clearly brighter than to spot a match

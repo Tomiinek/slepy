@@ -96,12 +96,18 @@ kbd {
 
 .app {
   min-height: 100%;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
 
+/* A stage field fills whatever the sticky progress bar leaves rather than
+ * claiming a full viewport of its own, which used to push the page just far
+ * enough to scroll. */
 .app__main {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Focus moves here on every stage change, which is necessary for keyboard and
@@ -281,7 +287,7 @@ kbd {
 
 .adaptation-field {
   background: var(--adapt-field);
-  min-height: 100vh;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -296,6 +302,40 @@ kbd {
   font-size: 0.95rem;
   text-align: center;
   max-width: 46ch;
+}
+
+/*
+ * The instruction above the stimulus and the hint below it both reword
+ * themselves as a stage runs -- a trial counter ticks over, a "carrying a
+ * swatch" note appears. Sized to their text, every one of those changes resized
+ * the centred column and slid the stimulus up or down under the participant's
+ * gaze, which is both irritating and bad for the measurement.
+ *
+ * So both get a slot of fixed height instead, tall enough for the longest
+ * wording that stage uses, and the text sits at the edge of that slot nearest
+ * the stimulus. Rewording now moves text within its slot and nothing else: the
+ * stimulus does not move, and the text stays next to what it describes.
+ *
+ * `align-content` rather than flexbox, because these paragraphs contain inline
+ * `kbd` and `strong` elements and a flex container would blockify each of them
+ * into its own column. Browsers without alignment in block layout simply leave
+ * the text at the top of its slot, which still does not jump.
+ */
+.stimulus-help--top,
+.stimulus-help--bottom {
+  margin: 0;
+  width: min(46ch, 90vw);
+  height: calc(var(--help-lines) * 1.6em);
+}
+
+.stimulus-help--top {
+  --help-lines: 3;
+  align-content: end;
+}
+
+.stimulus-help--bottom {
+  --help-lines: 4;
+  align-content: start;
 }
 
 .stimulus-canvas {

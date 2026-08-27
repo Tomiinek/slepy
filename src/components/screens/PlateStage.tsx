@@ -11,7 +11,7 @@ import { generatePlate } from '../../stimuli/plate';
 import { digitMask } from '../../stimuli/digitMask';
 import type { PlatePlan } from '../../stimuli/plateSet';
 import { PlateCanvas } from '../PlateCanvas';
-import { useViewportWidth } from '../../util/useMedia';
+import { useStimulusSize } from '../../util/useMedia';
 
 interface Props {
   readonly plan: PlatePlan;
@@ -22,8 +22,7 @@ interface Props {
 
 export function PlateStage({ plan, index, total, onAnswer }: Props) {
   const [entry, setEntry] = useState('');
-  const viewport = useViewportWidth();
-  const size = Math.max(280, Math.min(520, viewport - 80));
+  const size = useStimulusSize();
 
   // Mirrored in a ref so the key handler can read the current entry without
   // being re-bound on every keystroke, and without reading it from inside a
@@ -82,7 +81,7 @@ export function PlateStage({ plan, index, total, onAnswer }: Props) {
 
   return (
     <div className="adaptation-field">
-      <p className="stimulus-help" aria-live="polite">
+      <p className="stimulus-help stimulus-help--top" aria-live="polite">
         Plate {index + 1} of {total}. What number do you see?
       </p>
 
@@ -146,7 +145,7 @@ export function PlateStage({ plan, index, total, onAnswer }: Props) {
         </button>
       </div>
 
-      <p className="stimulus-help">
+      <p className="stimulus-help stimulus-help--bottom">
         Answer with the number keys and <kbd>Enter</kbd>, or press <kbd>Esc</kbd> if you cannot see
         a number. Guessing does not help you here &mdash; saying you see nothing is genuinely more
         useful than a lucky guess.

@@ -286,6 +286,48 @@ hr {
   line-height: 1.3;
 }
 
+/* A confusable pair, shown as two colours sharing an edge. Butted together
+ * rather than spaced, because a seam is where the absence of a difference is
+ * most obvious -- separated patches let the eye invent one. */
+.pair-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--space-3);
+}
+
+.pair {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+}
+
+.pair__chips {
+  display: flex;
+  flex: 0 0 auto;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.14);
+}
+
+.pair__chip {
+  width: 27px;
+  height: 42px;
+}
+
+.pair__names {
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
+.pair__flag {
+  color: var(--warn);
+  font-weight: 650;
+}
+
 .dot-swatch {
   display: inline-block;
   width: 14px;
@@ -297,25 +339,47 @@ hr {
 
 /* -------- Arrangement caps -------- */
 
+/*
+ * One row, always.
+ *
+ * Sixteen caps at a fixed 52px came to slightly more than the container allowed,
+ * so exactly one wrapped to a second line -- which looks broken and, worse,
+ * breaks the left-to-right reading of the sequence the task is about. The caps
+ * now share the row and shrink to fit instead, capped at their original size so
+ * nothing changes on a wide screen.
+ */
 .caps {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
   justify-content: center;
   padding: var(--space-3);
   border-radius: var(--radius-lg);
   background: rgb(0 0 0 / 0.08);
-  max-width: min(900px, 94vw);
+  width: min(900px, 94vw);
+}
+
+/*
+ * Deliberately no overflow container: `overflow-x` forces `overflow-y` to
+ * compute to `auto` as well, which would clip the lift on a selected cap.
+ * The caps are sized to fit even a narrow phone instead.
+ */
+@media (max-width: 520px) {
+  .caps {
+    gap: 4px;
+    padding: var(--space-3) var(--space-2);
+  }
 }
 
 .cap {
-  width: 52px;
-  height: 52px;
+  flex: 1 1 0;
+  min-width: 14px;
+  max-width: 52px;
+  aspect-ratio: 1;
   border-radius: 50%;
   border: 3px solid transparent;
   cursor: grab;
   position: relative;
-  flex: 0 0 auto;
 }
 
 /* Selection is a ring plus an offset, never a colour change: the caps are the
@@ -604,18 +668,34 @@ details.card[open] summary {
 }
 
 .inherit__dial {
+  position: relative;
   width: 66px;
   height: 66px;
   margin: 0 auto var(--space-2);
-  border-radius: 50%;
   display: grid;
   place-items: center;
-  /* Ring rather than pie: the hole carries the number. */
+}
+
+/*
+ * The filled proportion, as a ring so the hole can carry the number.
+ *
+ * On its own layer rather than on the dial itself: a mask applies to an
+ * element's descendants too, so masking the dial punched out the number along
+ * with the middle of the ring. Nothing in a DOM test can see that, which is how
+ * it survived -- the figure was simply invisible.
+ */
+.inherit__dial::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--dial);
   mask: radial-gradient(circle, transparent 58%, #000 59%);
   -webkit-mask: radial-gradient(circle, transparent 58%, #000 59%);
 }
 
 .inherit__dial span {
+  position: relative;
   font: 700 0.95rem var(--font-mono);
   color: var(--text);
 }

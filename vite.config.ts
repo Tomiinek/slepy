@@ -7,6 +7,13 @@ export default defineConfig({
   // Relative base so the built site works when opened from a file path or served
   // from a subdirectory; there is no backend to route around.
   base: './',
+  server: {
+    // Native filesystem events do not reach the dev server on every setup, and
+    // the failure mode is silent: the page keeps serving the last version it saw
+    // and edits appear to do nothing. Polling is a little more work for the CPU
+    // and much less confusing.
+    watch: { usePolling: true, interval: 300 },
+  },
   resolve: {
     alias: {
       '@': path.resolve(import.meta.dirname ?? '.', 'src'),

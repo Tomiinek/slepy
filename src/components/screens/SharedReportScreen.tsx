@@ -11,10 +11,11 @@
  * assessment and just addresses a different person, via `Voice`.
  */
 import { useMemo } from 'react';
-import { analyseConfusions } from '../../analysis/confusables';
+import { analyseConfusions, describeFamily } from '../../analysis/confusables';
 import type { Assessment } from '../../engine/classify';
 import { CONE_LABEL } from '../../color/lms';
 import { initial, otherVoice } from '../../copy/voice';
+import { InheritanceDiagram } from '../viz/InheritanceDiagram';
 import { Pictogram } from '../viz/Pictogram';
 import { SeverityGauge } from '../viz/SeverityGauge';
 import { SceneGrid } from '../viz/SceneGrid';
@@ -91,6 +92,40 @@ export function SharedReportScreen({ assessment, name, onTakeTest }: Props) {
     () => (assessment.vision ? analyseConfusions(assessment.vision) : null),
     [assessment.vision],
   );
+
+  /**
+   * Confusable pairs that no family already covers.
+   *
+   * Families only form where a whole group collapses together, which needs a
+   * fairly strong deficiency. Milder results produce no families at all while
+   * still losing dozens of individual pairs -- and this page exists to answer
+   * "what will he mix up", so showing nothing there would be the one failure
+   * that matters. Pairs fill that in, and are capped because a strong result
+   * generates hundreds of them and the reader would stop reading long before.
+   */
+  const loosePairs = useMemo(() => {
+    if (!analysis) return [];
+    const familyOf = new Map<string, number>();
+    analysis.families.forEach((family, i) => {
+      for (const member of family.members) familyOf.set(member.name, i);
+    });
+    return analysis.pairs
+      .filter((pair) => {
+        const a = familyOf.get(pair.a.name);
+        return a === undefined || a !== familyOf.get(pair.b.name);
+      })
+      // Pairs that brightness no longer rescues come first. They are the ones
+      // worth a reader's attention, and at mild severities the default order
+      // fills the list with pairs where one colour is plainly lighter -- true,
+      // but it reads as overclaiming to someone checking the list against
+      // their own eyes.
+      .sort(
+        (x, y) =>
+          Number(x.brightnessStillSeparates) - Number(y.brightnessStillSeparates) ||
+          y.lost - x.lost,
+      )
+      .slice(0, 12);
+  }, [analysis]);
 
   if (!axis || !assessment.vision) {
     return (
@@ -170,36 +205,103 @@ export function SharedReportScreen({ assessment, name, onTakeTest }: Props) {
 
       <Simulator assessment={assessment} voice={voice} />
 
-      {analysis && analysis.families.length > 0 && (
+      {analysis && (analysis.families.length > 0 || analysis.pairs.length > 0) && (
         <>
           <hr />
           <section className="stack">
             <h2>Colours that look the same to {voice.object}</h2>
             <p className="muted">
-              Roughly {Math.round(analysis.collapseRate * 100)}% of colour pairs lose their
-              difference. Each row below arrives as effectively one colour.
+              Every colour below is shown in true colour, as you see it. Grouped together, they
+              arrive as one colour for {voice.object}.
             </p>
-            <div className="stack">
-              {analysis.families.slice(0, 4).map((family, i) => (
-                <div key={i} className="family">
-                  <div className="swatches">
-                    {family.members.map((member) => (
-                      <figure key={member.name} className="swatch">
-                        <div className="swatch__chip" style={{ background: member.hex }} />
-                        <figcaption>{member.name}</figcaption>
-                      </figure>
-                    ))}
+
+            {analysis.families.length > 0 && (
+              <div className="stack">
+                {analysis.families.map((family, i) => (
+                  <div key={i} className="family">
+                    <div className="family__head">
+                      <strong>{describeFamily(family)}</strong>
+                      <div className="faint">
+                        {family.members.length} colours &mdash;{' '}
+                        {family.indistinguishable
+                          ? `one colour to ${voice.object}`
+                          : `one colour to ${voice.object}, with only a brightness difference left`}
+                      </div>
+                    </div>
+                    <div className="swatches">
+                      {family.members.map((member) => (
+                        <figure key={member.name} className="swatch">
+                          <div className="swatch__chip" style={{ background: member.hex }} />
+                          <figcaption>{member.name}</figcaption>
+                        </figure>
+                      ))}
+                    </div>
                   </div>
+                ))}
+              </div>
+            )}
+
+            {loosePairs.length > 0 && (
+              <div className="stack">
+                <h3 style={{ margin: 0 }}>
+                  {analysis.families.length > 0 ? 'And these two at a time' : 'Two at a time'}
+                </h3>
+                <p className="muted" style={{ marginBottom: 0 }}>
+                  The hue difference is gone in every pair below. In most, one is still clearly
+                  lighter, which is the cue {voice.subject} lean{voice.s} on without thinking about
+                  it &mdash; the marked ones do not even have that.
+                </p>
+                <div className="pair-grid">
+                  {loosePairs.map((pair) => (
+                    <div key={`${pair.a.name}-${pair.b.name}`} className="pair">
+                      <span className="pair__chips" aria-hidden="true">
+                        <span className="pair__chip" style={{ background: pair.a.hex }} />
+                        <span className="pair__chip" style={{ background: pair.b.hex }} />
+                      </span>
+                      <span className="pair__names">
+                        {pair.a.name} <span className="faint">&amp;</span> {pair.b.name}
+                        {!pair.brightnessStillSeparates && (
+                          <strong className="pair__flag"> &mdash; same brightness too</strong>
+                        )}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
+
             <p className="faint">
-              Shown in true colour, as you see them. To {voice.object} the swatches in each row are
-              near-identical.
+              Out of {analysis.colors.length} everyday colours,{' '}
+              {Math.round(analysis.collapseRate * 100)}% of the pairs that look clearly different to
+              you lose that difference for {voice.object}.
             </p>
           </section>
         </>
       )}
+
+      <hr />
+
+      <section className="stack">
+        <h2>Where it came from, and where it goes</h2>
+        <p className="muted">
+          {initial(voice.subject)} {voice.was} born with this and it will not change. The one part
+          that is worth knowing in advance is what happens in the next generation.
+        </p>
+        {redGreen ? (
+          <div className="card stack stack--tight">
+            <InheritanceDiagram voice={voice} />
+          </div>
+        ) : (
+          <div className="card stack stack--tight">
+            <h3>If you have children together</h3>
+            <p style={{ marginBottom: 0 }}>
+              This is the blue-yellow axis, which is not carried on the X chromosome, so it does not
+              skip down the male line the way the common red-green kind does. It is also rare enough
+              that it is worth {voice.possessive} while having it checked properly.
+            </p>
+          </div>
+        )}
+      </section>
 
       <hr />
 

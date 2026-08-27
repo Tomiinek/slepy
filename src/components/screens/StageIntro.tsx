@@ -70,7 +70,7 @@ export function StageIntro({
         </button>
       </div>
 
-      <p className="stimulus-help" aria-live="polite">
+      <p className="stimulus-help stimulus-help--bottom" aria-live="polite">
         {ready
           ? 'Take your time. Accuracy matters more than speed.'
           : 'Letting your eyes settle on the grey every stage is measured against.'}

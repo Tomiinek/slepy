@@ -194,6 +194,43 @@ describe('the page a recipient sees', () => {
     expect(window.location.hash).toBe('');
   });
 
+  it('names the colours that collapse, not just a percentage', () => {
+    openSharedLink(DEUTAN, 'Tomas');
+
+    expect(screen.getByRole('heading', { name: /Colours that look the same to Tomas/ })).toBeTruthy();
+
+    // A mild result produces no whole-family collapses at all, only individual
+    // pairs. Showing nothing there would gut the section this page exists for.
+    const swatches = document.querySelectorAll('.swatch__chip, .pair__chip');
+    expect(swatches.length).toBeGreaterThan(8);
+  });
+
+  it('answers the children question, from the reader\u2019s side', () => {
+    openSharedLink(DEUTAN, 'Tomas');
+
+    expect(screen.getByRole('heading', { name: /If you have children together/ })).toBeTruthy();
+
+    // The sex toggle is about the sharer here, not the reader as in the full
+    // report, and it drives the figures.
+    const dials = () => [...document.querySelectorAll('.inherit__dial')].map((d) => d.textContent);
+    expect(dials()).toEqual(['0%', '100%', '50%']);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Tomas is female' }));
+    expect(dials()).toEqual(['100%', '100%', '100%']);
+    expect(screen.queryByRole('button', { name: /I am male/ })).toBeNull();
+  });
+
+  it('draws each inheritance ring on its own layer, so the figure stays legible', () => {
+    openSharedLink(DEUTAN, 'Tomas');
+
+    // The ring is masked to leave a hole for the number. A mask applies to
+    // descendants too, so it has to live on a pseudo-element fed by this
+    // variable -- setting `background` directly here erases the number.
+    const dial = document.querySelector<HTMLElement>('.inherit__dial')!;
+    expect(dial.style.getPropertyValue('--dial')).toMatch(/conic-gradient/);
+    expect(dial.style.background).toBe('');
+  });
+
   it('handles a shared result with no deficiency', () => {
     openSharedLink({}, 'Tomas');
 

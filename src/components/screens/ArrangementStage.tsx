@@ -70,7 +70,7 @@ export function ArrangementStage({ order, onChange, onSubmit }: Props) {
 
   return (
     <div className="adaptation-field">
-      <p className="stimulus-help">
+      <p className="stimulus-help stimulus-help--top">
         Arrange these into the smoothest possible colour sequence, so each swatch is as close as
         possible in colour to its neighbours. The leftmost one is fixed as your starting point.
       </p>
@@ -153,7 +153,7 @@ export function ArrangementStage({ order, onChange, onSubmit }: Props) {
         </button>
       </div>
 
-      <p className="stimulus-help">
+      <p className="stimulus-help stimulus-help--bottom">
         Drag the swatches, or use the buttons, or press <kbd>&larr;</kbd> <kbd>&rarr;</kbd> to
         select and <kbd>Space</kbd> to pick up and drop.
         {carrying && <strong> Carrying a swatch &mdash; arrow keys will move it.</strong>}

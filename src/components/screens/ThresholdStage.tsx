@@ -11,7 +11,7 @@ import { useEffect, useMemo } from 'react';
 import { generateLandolt, type Orientation } from '../../stimuli/landolt';
 import type { ThresholdTrialRequest } from '../../engine/thresholdBlock';
 import { PlateCanvas } from '../PlateCanvas';
-import { useViewportWidth } from '../../util/useMedia';
+import { useStimulusSize } from '../../util/useMedia';
 
 interface Props {
   readonly trial: ThresholdTrialRequest;
@@ -28,8 +28,7 @@ const ARROWS: { orientation: Orientation; key: string; glyph: string; label: str
 ];
 
 export function ThresholdStage({ trial, trialCount, estimatedRemaining, onAnswer }: Props) {
-  const viewport = useViewportWidth();
-  const size = Math.max(280, Math.min(520, viewport - 80));
+  const size = useStimulusSize();
 
   const spec = useMemo(
     () =>
@@ -58,7 +57,7 @@ export function ThresholdStage({ trial, trialCount, estimatedRemaining, onAnswer
 
   return (
     <div className="adaptation-field">
-      <p className="stimulus-help" aria-live="polite">
+      <p className="stimulus-help stimulus-help--top" aria-live="polite">
         Which side is the gap in the ring on? Trial {trialCount + 1}, roughly{' '}
         {estimatedRemaining} to go.
       </p>
@@ -84,7 +83,7 @@ export function ThresholdStage({ trial, trialCount, estimatedRemaining, onAnswer
         ))}
       </div>
 
-      <p className="stimulus-help">
+      <p className="stimulus-help stimulus-help--bottom">
         Use the <kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&rarr;</kbd> <kbd>&darr;</kbd> keys. Many
         of these are meant to be right at the edge of what you can see &mdash; when you genuinely
         cannot tell, pick one anyway. The test accounts for guessing.

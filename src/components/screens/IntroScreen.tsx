@@ -30,19 +30,12 @@ export function IntroScreen({ onStart }: Props) {
   return (
     <div className="shell stack">
       <header>
-        <p className="faint mono">Colour vision assessment</p>
         <h1>How do you actually see colour?</h1>
         <p className="lede">
           Four short stages measure how finely you separate colours along each cone axis. Then a
           detailed report: which colours you confuse, why, and what others see instead.
         </p>
       </header>
-
-      <div className="grid grid--3">
-        <Fact value="~6 min" label="Four stages" />
-        <Fact value="3 axes" label="Red, green, blue pathways" />
-        <Fact value="4 tests" label="Plates, rings, patches, caps" />
-      </div>
 
       <div className="thumb-grid">
         {STAGES.map((stage) => (
@@ -72,15 +65,6 @@ export function IntroScreen({ onStart }: Props) {
           Check my display and begin
         </button>
       </div>
-    </div>
-  );
-}
-
-function Fact({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="card card--inset">
-      <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>{value}</div>
-      <div className="faint">{label}</div>
     </div>
   );
 }
