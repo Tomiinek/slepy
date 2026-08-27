@@ -40,6 +40,18 @@ interface Payload {
   readonly p: string;
   /** Completion timestamp, seconds since epoch. */
   readonly d: number;
+  /**
+   * Optional first name, so a shared page can say who it is about. Additive and
+   * optional, so links made before it existed still decode.
+   */
+  readonly n?: string;
+}
+
+/** Keeps a pasted name from bloating the URL or injecting layout-breaking text. */
+const NAME_LIMIT = 24;
+
+export function sanitiseName(raw: string): string {
+  return raw.replace(/\s+/g, ' ').trim().slice(0, NAME_LIMIT);
 }
 
 /**
@@ -54,7 +66,7 @@ const OUTCOME_CODES: readonly StaircaseResult['outcome'][] = [
   'inconclusive',
 ];
 
-export function encodeResults(results: SessionResults): string {
+export function encodeResults(results: SessionResults, name?: string): string {
   const thresholds: Record<string, [number, number, number]> = {};
   for (const axis of CVD_AXES) {
     const r = results.thresholds[axis];
@@ -65,6 +77,8 @@ export function encodeResults(results: SessionResults): string {
     ];
   }
 
+  const clean = name ? sanitiseName(name) : '';
+
   const payload: Payload = {
     v: VERSION,
     s: results.seed,
@@ -73,6 +87,7 @@ export function encodeResults(results: SessionResults): string {
     c: results.arrangement.order,
     p: results.plates.map((r) => (r.correct ? '1' : '0')).join(''),
     d: Math.floor(new Date(results.completedAt).getTime() / 1000),
+    ...(clean ? { n: clean } : {}),
   };
 
   return base64UrlEncode(JSON.stringify(payload));
@@ -80,6 +95,8 @@ export function encodeResults(results: SessionResults): string {
 
 export interface DecodedResults {
   readonly results: SessionResults;
+  /** Whoever the results belong to, if they chose to say. */
+  readonly name: string | null;
 }
 
 /**
@@ -87,6 +104,21 @@ export interface DecodedResults {
  * which the caller shows as a plain message -- a corrupted link should not look
  * like a real result.
  */
+export function decodeShared(hash: string): DecodedResults | null {
+  const results = decodeResults(hash);
+  if (!results) return null;
+
+  let name: string | null = null;
+  try {
+    const payload = JSON.parse(base64UrlDecode(hash.replace(/^#?r=/, ''))) as Payload;
+    name = payload.n ? sanitiseName(payload.n) : null;
+  } catch {
+    name = null;
+  }
+
+  return { results, name: name || null };
+}
+
 export function decodeResults(hash: string): SessionResults | null {
   try {
     const json = base64UrlDecode(hash.replace(/^#?r=/, ''));
@@ -162,7 +194,7 @@ function base64UrlDecode(text: string): string {
 }
 
 /** The full shareable URL for a result. */
-export function shareUrl(results: SessionResults): string {
+export function shareUrl(results: SessionResults, name?: string): string {
   const base = `${window.location.origin}${window.location.pathname}`;
-  return `${base}#r=${encodeResults(results)}`;
+  return `${base}#r=${encodeResults(results, name)}`;
 }

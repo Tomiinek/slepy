@@ -28,6 +28,22 @@ npm run dev      # http://localhost:5173
 The build uses a relative base, so `dist/` can be served from any subdirectory, or opened straight
 from disk.
 
+## Sharing a result
+
+The report has one output: a link. It encodes the measurements in the URL hash, so there is nothing
+stored anywhere and no expiry.
+
+Opening that link does **not** show a copy of the sharer's own report. It renders a separate page
+written for the recipient: who it is about, what they confuse, the situations rendered through their
+vision, and direct answers to the questions people actually ask — traffic lights first, because it
+is always first. The point is to replace the conversation, not to document it.
+
+An optional first name goes in the link so the page can say "Tomas has moderate deuteranomaly"
+rather than "they have". It is the only personal detail in the URL. Links are around 220 characters.
+
+Which person the page addresses comes from `src/copy/voice.ts`, so a component can serve both
+audiences without duplicated copy.
+
 ## Deploying
 
 `.github/workflows/deploy.yml` builds and publishes to GitHub Pages on every push to `main`. Enable

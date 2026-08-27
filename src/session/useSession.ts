@@ -21,7 +21,7 @@ import { classify } from '../engine/classify';
 import { shuffledStart } from '../engine/arrangement';
 import { makeRng, randomSeed } from '../util/rng';
 import { STAGE_ORDER, STAGE_WEIGHT, type Phase, type SessionResults } from './types';
-import { decodeResults } from './share';
+import { decodeShared, type DecodedResults } from './share';
 
 export interface SessionApi {
   readonly phase: Phase;
@@ -53,6 +53,11 @@ export interface SessionApi {
 
   readonly results: SessionResults | null;
 
+  /** True when the results came from a shared link rather than this session. */
+  readonly isShared: boolean;
+  /** Whoever the shared results belong to, if the link said. */
+  readonly sharedName: string | null;
+
   advance(to: Phase): void;
   restart(): void;
 }
@@ -68,10 +73,14 @@ export function useSession(): SessionApi {
   // frame first, which looked like a bug.
   const shared = useMemo(() => readSharedResults(), []);
 
-  const [seed, setSeed] = useState(() => shared?.seed ?? randomSeed());
+  const [seed, setSeed] = useState(() => shared?.results.seed ?? randomSeed());
   const [phase, setPhase] = useState<Phase>(shared ? 'results' : 'intro');
   const [version, setVersion] = useState(0);
-  const [results, setResults] = useState<SessionResults | null>(shared);
+  const [results, setResults] = useState<SessionResults | null>(shared?.results ?? null);
+  // Cleared as soon as the visitor starts their own test, so the shared framing
+  // never leaks into their own report.
+  const [sharedName, setSharedName] = useState<string | null>(shared?.name ?? null);
+  const [isShared, setIsShared] = useState(Boolean(shared));
 
   const bump = useCallback(() => setVersion((v) => v + 1), []);
 
@@ -170,6 +179,8 @@ export function useSession(): SessionApi {
     setCapOrder(shuffledStart(makeRng(next ^ CAP_SEED_SALT), 0));
     setSeed(next);
     setPhase('intro');
+    setIsShared(false);
+    setSharedName(null);
     // Otherwise a reload would drop the observer straight back into the shared
     // report they just chose to leave.
     if (typeof window !== 'undefined' && window.location.hash.startsWith('#r=')) {
@@ -214,17 +225,19 @@ export function useSession(): SessionApi {
     setCapOrder,
     submitArrangement: finish,
     results,
+    isShared,
+    sharedName,
     advance,
     restart,
   };
 }
 
 /** A result carried in the URL hash, if there is a valid one. */
-function readSharedResults(): SessionResults | null {
+function readSharedResults(): DecodedResults | null {
   if (typeof window === 'undefined') return null;
   const hash = window.location.hash;
   if (!hash.startsWith('#r=')) return null;
-  return decodeResults(hash);
+  return decodeShared(hash);
 }
 
 interface ProgressInputs {

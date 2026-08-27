@@ -23,17 +23,23 @@ import { daltonizeImageData, daltonizeSrgb } from '../../color/daltonize';
 import { hexFromSrgb, srgbFromHex } from '../../color/srgb';
 import type { Assessment } from '../../engine/classify';
 import { CONE_LABEL } from '../../color/lms';
+import { initial, SELF, type Voice } from '../../copy/voice';
 
 type Direction = 'simulate' | 'reveal';
 
 interface Props {
   readonly assessment: Assessment;
+  readonly voice?: Voice;
 }
 
-export function Simulator({ assessment }: Props) {
+export function Simulator({ assessment, voice = SELF }: Props) {
   const measured = assessment.vision;
   const [sceneId, setSceneId] = useState(SCENES[0].id);
   const [direction, setDirection] = useState<Direction>('simulate');
+
+  // "Reveal" exists to show the person themselves what they are missing, which
+  // means nothing to a visitor reading about someone else.
+  const offerReveal = voice.self;
   const [severity, setSeverity] = useState(measured?.severity ?? 1);
   const [split, setSplit] = useState(50);
 
@@ -65,32 +71,34 @@ export function Simulator({ assessment }: Props) {
 
   return (
     <section className="stack">
-      <h2>See it both ways</h2>
+      <h2>{voice.self ? 'See it both ways' : 'Side by side'}</h2>
       <p className="muted">
         {measured
-          ? 'Drag the divider. Drawn from your measured result, at your severity.'
+          ? `Drag the divider. Drawn from ${voice.possessive} measured result, at ${voice.possessive} severity.`
           : 'Nothing found for you, so this shows the most common form \u2014 deuteranomaly.'}
       </p>
 
       <div className="sim-controls">
-        <div className="seg" role="group" aria-label="Simulation direction">
-          <button
-            type="button"
-            className={`seg__btn ${direction === 'simulate' ? 'seg__btn--on' : ''}`}
-            onClick={() => setDirection('simulate')}
-            aria-pressed={direction === 'simulate'}
-          >
-            Normal &rarr; your vision
-          </button>
-          <button
-            type="button"
-            className={`seg__btn ${direction === 'reveal' ? 'seg__btn--on' : ''}`}
-            onClick={() => setDirection('reveal')}
-            aria-pressed={direction === 'reveal'}
-          >
-            Reveal what you are missing
-          </button>
-        </div>
+        {offerReveal && (
+          <div className="seg" role="group" aria-label="Simulation direction">
+            <button
+              type="button"
+              className={`seg__btn ${direction === 'simulate' ? 'seg__btn--on' : ''}`}
+              onClick={() => setDirection('simulate')}
+              aria-pressed={direction === 'simulate'}
+            >
+              Normal &rarr; your vision
+            </button>
+            <button
+              type="button"
+              className={`seg__btn ${direction === 'reveal' ? 'seg__btn--on' : ''}`}
+              onClick={() => setDirection('reveal')}
+              aria-pressed={direction === 'reveal'}
+            >
+              Reveal what you are missing
+            </button>
+          </div>
+        )}
 
         <label className="sim-field">
           <span className="faint">Scene</span>
@@ -124,7 +132,13 @@ export function Simulator({ assessment }: Props) {
         split={split}
         onSplitChange={setSplit}
         leftLabel={direction === 'simulate' ? 'Typical vision' : 'As you see it now'}
-        rightLabel={direction === 'simulate' ? 'Your vision' : 'Contrast remapped'}
+        rightLabel={
+          direction === 'simulate'
+            ? voice.self
+              ? 'Your vision'
+              : `${initial(voice.possessive)} vision`
+            : 'Contrast remapped'
+        }
         left={scene.render(direction === 'simulate' ? identity : paintSimulated(vision))}
         right={scene.render(direction === 'simulate' ? paint : paintRevealed(vision, axis, severity))}
       />
@@ -142,7 +156,13 @@ export function Simulator({ assessment }: Props) {
         </div>
       )}
 
-      <ImageUpload vision={vision} direction={direction} axis={axis} severity={severity} />
+      <ImageUpload
+        vision={vision}
+        direction={direction}
+        axis={axis}
+        severity={severity}
+        voice={voice}
+      />
     </section>
   );
 }
@@ -253,11 +273,13 @@ function ImageUpload({
   direction,
   axis,
   severity,
+  voice,
 }: {
   vision: Vision;
   direction: Direction;
   axis: 'protan' | 'deutan' | 'tritan';
   severity: number;
+  voice: Voice;
 }) {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -299,7 +321,9 @@ function ImageUpload({
       <summary>
         <strong>Try it on one of your own photos</strong>
       </summary>
-      <p className="muted">Pick any photo and see it through your own eyes.</p>
+      <p className="muted">
+        Pick any photo and see it through {voice.self ? 'your own' : voice.possessive} eyes.
+      </p>
 
       <input
         type="file"

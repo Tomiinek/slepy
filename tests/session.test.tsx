@@ -170,7 +170,11 @@ describe('a complete session', () => {
       expect(screen.getByText(/See it both ways/)).toBeTruthy();
       expect(screen.getByText(/Where this lives on the colour map/)).toBeTruthy();
       expect(screen.getByText(/What this means day to day/)).toBeTruthy();
-      expect(screen.getByText(/Save or share/)).toBeTruthy();
+      expect(screen.getByText(/Explain this to someone else/)).toBeTruthy();
+
+      // PNG and JSON export were removed in favour of the link; if they come
+      // back by accident the share section stops being one obvious action.
+      expect(screen.queryByRole('button', { name: /Download/i })).toBeNull();
 
       // Every axis is reported, with a real percentage rather than NaN.
       for (const cone of ['L cone', 'M cone', 'S cone']) {

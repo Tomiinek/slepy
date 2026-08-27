@@ -6,7 +6,7 @@ import { ConfusionFamilies } from '../results/ConfusionFamilies';
 import { Simulator } from '../results/Simulator';
 import { ChromaticityDiagram } from '../results/ChromaticityDiagram';
 import { Implications } from '../results/Implications';
-import { ExportPanel } from '../results/ExportPanel';
+import { SharePanel } from '../results/SharePanel';
 
 interface Props {
   readonly results: SessionResults;
@@ -30,7 +30,7 @@ export function ResultsScreen({ results, onRestart }: Props) {
       <hr />
       <Implications assessment={results.assessment} />
       <hr />
-      <ExportPanel results={results} />
+      <SharePanel results={results} />
       <div className="row">
         <button type="button" className="btn btn--ghost" onClick={onRestart}>
           Take the test again

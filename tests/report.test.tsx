@@ -229,7 +229,8 @@ describe('the report renders its charts with content', () => {
       expect(text).not.toMatch(phrase);
     }
 
-    expect(screen.getByText(/Save or share it/)).toBeTruthy();
+    expect(screen.getByText(/Explain this to someone else/)).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /Download/i })).toBeNull();
   });
 
   it('renders the normal-vision branch without charts that need an axis', () => {

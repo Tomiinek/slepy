@@ -13,6 +13,7 @@ import { useMemo, useState } from 'react';
 import { SCENES, type Paint, type Scene } from '../../scenes';
 import { simulateSrgb, type Vision } from '../../color/cvd';
 import { hexFromSrgb, srgbFromHex } from '../../color/srgb';
+import { SELF, type Voice } from '../../copy/voice';
 
 /** Short risk labels, keyed by scene. Long-form detail lives in the simulator. */
 const RISK: Record<string, string> = {
@@ -43,9 +44,11 @@ function memoPaint(vision: Vision): Paint {
 interface Props {
   readonly vision: Vision;
   readonly redGreen: boolean;
+  readonly voice?: Voice;
+  readonly heading?: string;
 }
 
-export function SceneGrid({ vision, redGreen }: Props) {
+export function SceneGrid({ vision, redGreen, voice = SELF, heading = 'Where it bites' }: Props) {
   const [typical, setTypical] = useState(false);
 
   const scenes = useMemo(() => {
@@ -61,14 +64,14 @@ export function SceneGrid({ vision, redGreen }: Props) {
   return (
     <div className="stack stack--tight">
       <div className="row row--between">
-        <h3>Where it bites</h3>
+        <h3>{heading}</h3>
         <button
           type="button"
           className="btn btn--ghost btn--small"
           onClick={() => setTypical((v) => !v)}
           aria-pressed={typical}
         >
-          {typical ? 'Showing typical vision' : 'Showing your vision'}
+          {typical ? 'Showing typical vision' : `Showing ${voice.possessive} vision`}
         </button>
       </div>
 

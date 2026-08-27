@@ -778,3 +778,87 @@ details.card[open] summary {
   color: var(--text-dim);
   margin-left: 2px;
 }
+
+/* ---------------------------------------------------------------------------
+   Shared-report page
+   --------------------------------------------------------------------------- */
+
+.myths {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-3);
+}
+
+.myth {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+}
+
+/* The verdict is the first thing read, so it carries colour and weight. */
+.myth__verdict {
+  flex: 0 0 auto;
+  min-width: 58px;
+  text-align: center;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.myth--no .myth__verdict {
+  background: rgb(99 200 160 / 0.16);
+  color: var(--ok);
+}
+
+.myth--yes .myth__verdict {
+  background: rgb(110 168 254 / 0.16);
+  color: var(--accent);
+}
+
+.myth--sort-of .myth__verdict {
+  background: rgb(240 184 73 / 0.16);
+  color: var(--warn);
+}
+
+.share {
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-raised);
+}
+
+.share__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 42ch;
+}
+
+.share__field input {
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg-inset);
+  color: var(--text);
+  font: inherit;
+}
+
+.share__field input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.share__preview {
+  margin: var(--space-4) 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--accent-dim);
+  background: var(--bg-inset);
+  border-radius: var(--radius-sm);
+}

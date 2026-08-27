@@ -84,8 +84,11 @@ function makeResults(profile: Profile): SessionResults {
 }
 
 const profile = (process.argv[2] ?? 'deutan') as Profile;
+const name = process.argv[3];
 const results = makeResults(profile);
+const hash = encodeResults(results, name);
 
-console.log(`profile:  ${profile}`);
+console.log(`profile:  ${profile}${name ? ` (${name})` : ''}`);
 console.log(`verdict:  ${results.assessment.headline}`);
-console.log(`url:      http://localhost:5173/#r=${encodeResults(results)}`);
+console.log(`length:   ${hash.length + 3} characters of hash`);
+console.log(`url:      http://localhost:5173/#r=${hash}`);

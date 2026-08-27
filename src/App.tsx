@@ -9,6 +9,7 @@ import { ArrangementStage } from './components/screens/ArrangementStage';
 import { StageIntro } from './components/screens/StageIntro';
 import { ProgressBar } from './components/ProgressBar';
 import { ResultsScreen } from './components/screens/ResultsScreen';
+import { SharedReportScreen } from './components/screens/SharedReportScreen';
 import { StageAnnouncer, useStageAnnouncement } from './components/StageAnnouncer';
 
 export function App() {
@@ -134,8 +135,17 @@ function renderPhase(session: ReturnType<typeof useSession>) {
       );
 
     case 'results':
-      return session.results ? (
+      if (!session.results) return null;
+      // A shared link is read by someone else, so it gets the explainer written
+      // about the sharer rather than a copy of the sharer's own report.
+      return session.isShared ? (
+        <SharedReportScreen
+          assessment={session.results.assessment}
+          name={session.sharedName}
+          onTakeTest={session.restart}
+        />
+      ) : (
         <ResultsScreen results={session.results} onRestart={session.restart} />
-      ) : null;
+      );
   }
 }
